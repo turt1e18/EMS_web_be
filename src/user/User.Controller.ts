@@ -25,7 +25,9 @@ export class UserController {
       );
 
       console.log(`[controller] login success!`); // 테스트로그
-      console.log(`session info :  `+ sessionConfig.cookieName + `-` + serviceResponse.session.session_id); // 테스트로그
+      console.log(
+        `session info :  ` + sessionConfig.cookieName + `-` + serviceResponse.session.session_id
+      ); // 테스트로그
 
       return res
         .status(200)
@@ -38,7 +40,7 @@ export class UserController {
 
   public logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("[controller] logout called");
+      console.log('[controller] logout called');
       // 1) 쿠키에서 세션ID(sid) 꺼내기
       const sid = req.cookies['sid'];
       console.log(`[controller] sid to remove : `, sid); // 테스트로그
@@ -61,7 +63,7 @@ export class UserController {
 
   public checkSession = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("[controller] check session called");
+      console.log('[controller] check session called');
       // 쿠키에서 sid 존재 찾기 -> 쿠키가 없으면 NOT_SID 응답
       const sid = (req as any).cookies?.[sessionConfig.cookieName];
       if (!sid) {

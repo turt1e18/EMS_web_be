@@ -9,7 +9,7 @@ import type {
   SessionInfo,
 } from '../types/User.Type.js';
 import { sessionConfig } from '../config/session.js';
-import {userRepository} from "./User.Repository.js";
+import { userRepository } from './User.Repository.js';
 
 export class UserService implements UserServiceInterface {
   constructor(private readonly userRepository: UserRepositoryInterface) {}
@@ -19,9 +19,9 @@ export class UserService implements UserServiceInterface {
     try {
       //입력받은 이메일로 유저 찾고 없으면 false 반환
       const user = await this.userRepository.findUserByEmail(userInputData.email);
-      console.log("[service] user data received : \n", user); // 테스트로그
+      console.log('[service] user data received : \n', user); // 테스트로그
       if (user == null) {
-        console.log("[service] user not found, input email : ", userInputData.email); // 테스트로그
+        console.log('[service] user not found, input email : ', userInputData.email); // 테스트로그
         return {
           ok: false,
           user: { email: userInputData.email },
@@ -71,7 +71,7 @@ export class UserService implements UserServiceInterface {
   /* userService.logout (return : void) */
   public async logout(sid: string): Promise<void> {
     const user = await this.userRepository.findUserBySessionId(sid);
-    console.log("[service] user data to logout : \n", user);
+    console.log('[service] user data to logout : \n', user);
     if (!user) {
       // 이미 세션이 없거나 잘못된 sid인 경우 -> 할 일 없음
       return;

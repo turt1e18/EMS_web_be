@@ -1,4 +1,4 @@
-import type {RowDataPacket} from "mysql2/promise";
+import type { RowDataPacket } from 'mysql2/promise';
 /**
  * 유저가 대여 요청을 보낼때 받아야되는 요청객체타입
  */
@@ -6,15 +6,6 @@ export interface RentRequest {
   userId: number;
   itemId: number;
   quantity: number;
-}
-
-/**
- * 유저의 요청에서 확장한 대여처리의 응답타입
- */
-export interface RentResponse extends RentRequest{
-  itemId: number;
-  rentDate: Date;
-  dueDate: Date;
 }
 
 /**
@@ -29,8 +20,8 @@ export interface ItemInfo {
   currentQuantity: number;
   isRentable: boolean;
   maxQuantityPerRent: number;
-  createdAt : Date;
-  updatedAt : Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 /**
@@ -47,17 +38,3 @@ export type ItemRow = RowDataPacket & {
   created_at: Date;
   updated_at: Date;
 };
-
-
-/**
- * 대여 트랜잭션 테이블의 DTO
- */
-export interface RentTransaction {
-  id : number;
-  userId : number;
-  itemId : number;
-  quantity : number;
-  rentedAt : Date;
-  dueAt : Date;
-  returnedAt : Date | null;
-}

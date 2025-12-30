@@ -1,13 +1,13 @@
-import type {ItemInfo, RentRequest} from "../types/Rent.Type.js";
-import {pool} from "../config/db.js";
-import type {ItemRow} from "../types/Rent.Type.js";
+import type { ItemInfo, RentRequest } from '../types/Rent.Type.js';
+import { pool } from '../config/db.js';
+import type { ItemRow } from '../types/Rent.Type.js';
 
 /**
  * 유저가 요청한 물품 아이디로 물품 행 찾아서 그대로 넘겨주기
  * @param itemId
  * @returns ItemInfo | null
  */
-export async function findItemById(itemId : number) : Promise<ItemInfo | null> {
+export async function findItemById(itemId: number): Promise<ItemInfo | null> {
   try {
     const sql = `
         SELECT id,
@@ -27,7 +27,7 @@ export async function findItemById(itemId : number) : Promise<ItemInfo | null> {
     if (!row) {
       return null;
     }
-    console.log("[repository] item data found : \n", row);
+    console.log('[repository] item data found : \n', row);
     return {
       itemId: row.id,
       itemName: row.name,
@@ -53,8 +53,8 @@ export async function findItemById(itemId : number) : Promise<ItemInfo | null> {
  * @param rentRequest
  * @returns void | Error
  */
-export async function rentItemRepository(rentRequest : RentRequest) : Promise<void> {
-  const {userId, itemId, quantity} = rentRequest;
+export async function rentItemRepository(rentRequest: RentRequest): Promise<void> {
+  const { userId, itemId, quantity } = rentRequest;
 
   const conn = await pool.getConnection();
   try {
@@ -87,7 +87,7 @@ export async function rentItemRepository(rentRequest : RentRequest) : Promise<vo
         ?, 
         ?, 
         NOW(), 
-        DATE_ADD(NOW(), INTERVAL 7 DAY), 
+        DATE_ADD(NOW(), INTERVAL 14 DAY), 
         NULL
       )
     `;
@@ -110,7 +110,12 @@ export async function rentItemRepository(rentRequest : RentRequest) : Promise<vo
  * @params limit
  * @returns ItemRow[]
  */
-export async function findItemList(keyword: string, category: string, offset: number, limit: number): Promise<ItemInfo[]> {
+export async function findItemList(
+  keyword: string,
+  category: string,
+  offset: number,
+  limit: number
+): Promise<ItemInfo[]> {
   try {
     let sql = `
         SELECT id,
@@ -125,26 +130,25 @@ export async function findItemList(keyword: string, category: string, offset: nu
         FROM items
         WHERE 1=1
     `;
-    
+
     const params: any[] = [];
-    
+
     if (keyword) {
       sql += ` AND name LIKE ?`;
       params.push(`%${keyword}%`);
     }
-    
+
     if (category && category !== 'ALL') {
       sql += ` AND category = ?`;
       params.push(category);
     }
-    
-    // LIMIT limit (frontend handles the +1 logic if needed)
+
     sql += ` LIMIT ? OFFSET ?`;
     params.push(limit, offset);
-    
+
     const [rows] = await pool.query<ItemRow[]>(sql, params);
-    
-    return rows.map(row => ({
+
+    return rows.map((row) => ({
       itemId: row.id,
       itemName: row.name,
       itemCategory: row.category,

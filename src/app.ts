@@ -7,8 +7,9 @@ import { sendCode } from './signup/Signup.EmailCode.js';
 import { UserController } from './user/User.Controller.js';
 import { UserRepository } from './user/User.Repository.js';
 import { UserService } from './user/User.Service.js';
-import { rentItemController} from "./rent/Rent.Controller.js";
-import {getItemListController} from "./rent/Rent.Controller.js";
+import { rentItemController } from './rent/Rent.Controller.js';
+import { getItemListController } from './rent/Rent.Controller.js';
+import { getRentedListController, returnItemController } from './return/Return.Controller.js';
 
 // express app
 const app = express();
@@ -49,6 +50,12 @@ app.get('/api/checkSession', userController.checkSession); // 세션 확인용
  */
 app.post('/api/rent', rentItemController);
 app.get('/api/getItemList', getItemListController);
+
+/**
+ * return
+ */
+app.get('/api/getRentedItemList', getRentedListController);
+app.post('/api/returnItem', returnItemController);
 
 /**
  *  signup
