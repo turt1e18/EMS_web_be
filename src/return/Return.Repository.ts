@@ -3,6 +3,7 @@ import { pool } from '../config/db.js';
 import type { RowDataPacket } from 'mysql2';
 
 interface RentedRow extends RowDataPacket {
+  id: number;
   item_id: number;
   item_name: string;
   quantity: number;
@@ -34,7 +35,7 @@ export async function getRentedItemListRepository(userId: number): Promise<Rente
     const [rows] = await pool.query<RentedRow[]>(sql, [userId]);
 
     return rows.map((row) => ({
-      id: row.id,
+      id: Number(row.id),
       itemId: row.item_id,
       itemName: row.item_name,
       quantity: row.quantity,

@@ -1,10 +1,14 @@
 import type { Request, Response } from 'express';
 import type { RentRequest } from '../types/Rent.Type.js';
 import { rentItemService } from './Rent.Service.js';
-import { sessionConfig } from '../config/session.js';
-import { userService } from '../user/User.Service.js';
 import { getItemListService } from './Rent.Service.js';
 import { z } from 'zod';
+
+// 대여 요청 zod 스키마
+const RentRequestSchema = z.object({
+  itemId: z.number().int().positive(),
+  quantity: z.number().int().positive().max(10),
+});
 
 /**
  * 대여 실행하는 컨트롤러 함수
@@ -13,25 +17,10 @@ import { z } from 'zod';
  * @return void | 500
  */
 export async function rentItemController(req: Request, res: Response) {
-  const sid = req.cookies[sessionConfig.cookieName];
-  if (!sid) {
-    return res.status(401).json({ message: 'NO_SESSION' });
-  }
   try {
-    const sessionStatus = await userService.checkSessionBySid(sid);
-    if (sessionStatus.state === 'invalid') {
-      return res.status(401).json({ message: 'SESSION_INVALID' });
-    }
-    if (sessionStatus.state === 'expired') {
-      return res.status(401).json({ message: 'SESSION_EXPIRED' });
-    }
-    const userId = sessionStatus.user.id;
-
-    const rentRequest: RentRequest = {
-      userId,
-      itemId: req.body.itemId,
-      quantity: req.body.quantity,
-    };
+    const userId = req.userId!; // authCheck에서 받은 값
+    const { itemId, quantity } = RentRequestSchema.parse(req.body);
+    const rentRequest: RentRequest = { userId, itemId, quantity };
     await rentItemService(rentRequest);
     res.status(200).json({ message: 'rent success' });
   } catch (error) {

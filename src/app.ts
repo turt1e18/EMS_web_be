@@ -4,12 +4,14 @@ import express from 'express';
 import { pool } from './config/db.js';
 import { addUserByAuto, addUserByManual } from './signup/Signup.AddUser.js';
 import { sendCode } from './signup/Signup.EmailCode.js';
-import { UserController } from './user/User.Controller.js';
-import { UserRepository } from './user/User.Repository.js';
-import { UserService } from './user/User.Service.js';
-import { rentItemController } from './rent/Rent.Controller.js';
-import { getItemListController } from './rent/Rent.Controller.js';
+import {
+  loginController,
+  logoutController,
+  checkSessionController,
+} from './user/User.Controller.js';
+import { rentItemController, getItemListController } from './rent/Rent.Controller.js';
 import { getRentedListController, returnItemController } from './return/Return.Controller.js';
+import { authCheck } from './utils/authCheck.js';
 
 // express app
 const app = express();
@@ -32,30 +34,25 @@ app.use(
   })
 );
 
-// 레이어별 인스턴스 생성 + 주입
-const userRepository = new UserRepository(pool);
-const userService = new UserService(userRepository);
-const userController = new UserController(userService);
-
 //라우팅
 /**
  *  login
  */
-app.post('/api/login', userController.login); // 로그인 요청
-app.post('/api/logout', userController.logout); // 로그아웃 요청
-app.get('/api/checkSession', userController.checkSession); // 세션 확인용
+app.post('/api/login', loginController); // 로그인 요청
+app.post('/api/logout', logoutController); // 로그아웃 요청
+app.get('/api/checkSession', checkSessionController); // 세션 확인용
 
 /**
  * rent
  */
-app.post('/api/rent', rentItemController);
-app.get('/api/getItemList', getItemListController);
+app.post('/api/rent', authCheck, rentItemController);
+app.get('/api/getItemList', authCheck, getItemListController);
 
 /**
  * return
  */
-app.get('/api/getRentedItemList', getRentedListController);
-app.post('/api/returnItem', returnItemController);
+app.get('/api/getRentedItemList', authCheck, getRentedListController);
+app.post('/api/returnItem', authCheck, returnItemController);
 
 /**
  *  signup

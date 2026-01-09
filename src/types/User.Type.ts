@@ -36,18 +36,3 @@ export type LoginSuccess = {
 };
 export type LoginFail = { ok: false; user: { email: string }; message: string };
 export type LoginResult = LoginSuccess | LoginFail;
-
-// 레포지토리 레이어의 메서드별 반환 타입
-export interface UserRepositoryInterface {
-  findUserByEmail(email: string): Promise<UserEntity | null>;
-  findUserBySessionId(sid: string): Promise<UserEntity | null>;
-  updateSession(userId: number, sid: string, expiresAt: Date): Promise<void>;
-  clearSession(sid: string): Promise<void>;
-}
-
-// 서비스 레이어의 메서드별 반환 타입
-export interface UserServiceInterface {
-  login(userInputData: LoginDto): Promise<LoginResult>;
-  logout(sid: string): Promise<void>;
-  checkSessionBySid(sid: string): Promise<SessionCheckResult>;
-}
